@@ -9,3 +9,7 @@ dependencies = []
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[project.scripts]
+index_words = "markua_indexing.generate_index_word_list:main"
+defence = "markua_indexing.generate_index_word_list:remove_fences_command_line"

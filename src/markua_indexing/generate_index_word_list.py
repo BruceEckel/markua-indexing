@@ -5,14 +5,35 @@ import re
 from pathlib import Path
 from typing import List, Set
 
+from markua_indexing.util import TopDir
+
 stop_words_path = importlib.resources.files("markua_indexing.data").joinpath(
     "NLTKStopWords.txt"
 )
 
+index_words_file = TopDir("data") / "index_words.txt"
+
 
 def remove_fences(markdown: str) -> str:
-    pattern = r"(?sm)^\s*```\w*\s*\n.*?\n\s*```\s*\n?"
+    pattern = r"(?s)```.*?\n.*?```"
     return re.sub(pattern, "", markdown)
+
+
+def remove_fences_command_line():
+    parser = argparse.ArgumentParser(description="Remove fenced code blocks from markdown files.")
+    parser.add_argument("markdown_files", type=str, nargs='+', help="Paths to the markdown files (supports wildcards)")
+    args = parser.parse_args()
+    # Process each file matching the provided pattern(s)
+    for pattern in args.markdown_files:
+        for file_path in glob.glob(pattern):
+            path = Path(file_path)
+            if path.suffix == '.md':
+                markdown_content = path.read_text(encoding='utf-8')
+                de_fenced_content = remove_fences(markdown_content)
+                # Create the new file name with '_de_fenced' appended before the file extension
+                new_file_path = path.with_name(path.stem + '_de_fenced' + path.suffix)
+                new_file_path.write_text(de_fenced_content, encoding='utf-8')
+                print(f"Processed file saved as: {new_file_path}")
 
 
 def find_italicized_phrases(markdown: str) -> List[str]:
@@ -29,7 +50,7 @@ def create_sorted_unique_word_list(text: str) -> List[str]:
 
 
 def filter_stop_words(word_list: List[str]) -> List[str]:
-    stop_words = set(stop_words_path.read_text().splitlines())
+    stop_words = set(stop_words_path.read_text(encoding="utf-8").splitlines())
     return [word for word in word_list if word.lower() not in stop_words]
 
 
@@ -61,7 +82,7 @@ def main():
     combined_text = ""
 
     for file in files:
-        markdown_text = Path(file).read_text()
+        markdown_text = Path(file).read_text(encoding='utf-8')
 
         # Remove fenced code blocks
         de_fenced_text = remove_fences(markdown_text)
@@ -79,8 +100,8 @@ def main():
     filtered_words = filter_stop_words(sorted_unique_words)
 
     # Write the italicized phrases and filtered words to 'index_words.txt'
-    index_words_file = Path("index_words.txt")
-    with index_words_file.open("w") as f:
+
+    with index_words_file.open("w", encoding='utf-8') as f:
         # Write italicized phrases at the top
         if all_italicized_phrases:
             f.write("Italicized Phrases:\n")
