@@ -54,7 +54,13 @@ def filter_stop_words(word_list: List[str]) -> List[str]:
     return [word for word in word_list if word.lower() not in stop_words]
 
 
+import argparse
+import glob
+from pathlib import Path
+
+
 def main():
+    global index_words_file
     parser = argparse.ArgumentParser(
         description="""
     This script processes one or more markdown files, either individually named or via wildcard. 
@@ -75,8 +81,8 @@ def main():
     # Collect markdown files from the command line arguments (supporting wildcards)
     files = [file for arg in args.files for file in glob.glob(arg)]
 
-    # To accumulate all italicized phrases
-    all_italicized_phrases = []
+    # To accumulate all italicized phrases as a set (unique phrases)
+    all_italicized_phrases = set()
 
     # To accumulate all text after removing fences
     combined_text = ""
@@ -88,7 +94,7 @@ def main():
         de_fenced_text = remove_fences(markdown_text)
 
         # Find and accumulate italicized phrases
-        all_italicized_phrases.extend(find_italicized_phrases(de_fenced_text))
+        all_italicized_phrases.update(find_italicized_phrases(de_fenced_text))
 
         # Accumulate the text for word processing
         combined_text += de_fenced_text + " "
@@ -99,13 +105,11 @@ def main():
     # Filter out stop words
     filtered_words = filter_stop_words(sorted_unique_words)
 
-    # Write the italicized phrases and filtered words to 'index_words.txt'
-
     with index_words_file.open("w", encoding='utf-8') as f:
         # Write italicized phrases at the top
         if all_italicized_phrases:
             f.write("Italicized Phrases:\n")
-            f.write("\n".join(all_italicized_phrases) + "\n\n")
+            f.write("\n".join(sorted(all_italicized_phrases)) + "\n\n")
 
         # Write the filtered words below the italicized phrases
         f.write("Index Words:\n")
