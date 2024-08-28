@@ -1,0 +1,11 @@
+[project]
+name = "markua-indexing"
+version = "0.1.0"
+description = "Tools to help index Markua documents; see https://markua.com/"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

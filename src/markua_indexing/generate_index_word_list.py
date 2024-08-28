@@ -1,0 +1,99 @@
+import argparse
+import glob
+import importlib.resources
+import re
+from pathlib import Path
+from typing import List, Set
+
+stop_words_path = importlib.resources.files("markua_indexing.data").joinpath(
+    "NLTKStopWords.txt"
+)
+
+
+def remove_fences(markdown: str) -> str:
+    pattern = r"(?sm)^\s*```\w*\s*\n.*?\n\s*```\s*\n?"
+    return re.sub(pattern, "", markdown)
+
+
+def find_italicized_phrases(markdown: str) -> List[str]:
+    pattern = r"(?<!\*)\*(.*?)\*(?!\*)|(?<!_)_(.*?)_(?!_)"
+    matches = re.findall(pattern, markdown)
+    italic_phrases = [phrase for group in matches for phrase in group if phrase]
+    return italic_phrases
+
+
+def create_sorted_unique_word_list(text: str) -> List[str]:
+    words = re.findall(r"\b\w+\b", text)
+    unique_words: Set[str] = set(words)
+    return sorted(unique_words, key=lambda word: (word.lower(), word))
+
+
+def filter_stop_words(word_list: List[str]) -> List[str]:
+    stop_words = set(stop_words_path.read_text().splitlines())
+    return [word for word in word_list if word.lower() not in stop_words]
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="""
+    This script processes one or more markdown files, either individually named or via wildcard. 
+    It reads each file, removes all fenced code blocks (delimited by ```), and extracts italicized phrases 
+    (delimited by * or _). It accumulates all italicized phrases, generates a sorted list of unique words from 
+    the remaining text, filters out stop words using a StopWords.txt file, and writes the result to index_words.txt.
+    The italicized phrases are included at the top of index_words.txt.
+    """
+    )
+
+    parser.add_argument(
+        "files",
+        nargs="+",
+        help="One or more markdown files or file patterns (wildcards supported).",
+    )
+    args = parser.parse_args()
+
+    # Collect markdown files from the command line arguments (supporting wildcards)
+    files = [file for arg in args.files for file in glob.glob(arg)]
+
+    # To accumulate all italicized phrases
+    all_italicized_phrases = []
+
+    # To accumulate all text after removing fences
+    combined_text = ""
+
+    for file in files:
+        markdown_text = Path(file).read_text()
+
+        # Remove fenced code blocks
+        de_fenced_text = remove_fences(markdown_text)
+
+        # Find and accumulate italicized phrases
+        all_italicized_phrases.extend(find_italicized_phrases(de_fenced_text))
+
+        # Accumulate the text for word processing
+        combined_text += de_fenced_text + " "
+
+    # Create a sorted unique word list from the combined de-fenced text
+    sorted_unique_words = create_sorted_unique_word_list(combined_text)
+
+    # Filter out stop words
+    filtered_words = filter_stop_words(sorted_unique_words)
+
+    # Write the italicized phrases and filtered words to 'index_words.txt'
+    index_words_file = Path("index_words.txt")
+    with index_words_file.open("w") as f:
+        # Write italicized phrases at the top
+        if all_italicized_phrases:
+            f.write("Italicized Phrases:\n")
+            f.write("\n".join(all_italicized_phrases) + "\n\n")
+
+        # Write the filtered words below the italicized phrases
+        f.write("Index Words:\n")
+        f.write("\n".join(filtered_words))
+
+    # Optionally, you can print or log the italicized phrases if needed
+    print(f"Collected italicized phrases: {all_italicized_phrases}")
+    print(f"Filtered words have been written to {index_words_file}")
+
+
+if __name__ == "__main__":
+    main()
