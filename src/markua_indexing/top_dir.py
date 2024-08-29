@@ -2,6 +2,7 @@ from pathlib import Path
 
 project_dir = Path(__file__).parent.parent.parent
 
+
 class TopDir:
     """
     Directory off of the project root that is guaranteed to exist.

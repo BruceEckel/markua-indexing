@@ -3,7 +3,7 @@ from src.markua_indexing.generate_index_word_list import remove_fences
 
 # List of test cases with markdown_text and expected_result pairs
 test_cases = [
-    
+
     ("""First line
 ```
 This is a code block
@@ -36,11 +36,12 @@ Last line"""),
 ```python
 Code block 1
 ```
-Last line""", 
-"""First line
+Last line""",
+     """First line
 
 Last line""")
 ]
+
 
 @pytest.mark.parametrize("markdown_text, expected_result", test_cases)
 def test_remove_fences(markdown_text, expected_result):

@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 from typing import List, Set
 
-from markua_indexing.util import TopDir
+from markua_indexing.top_dir import TopDir
 
 stop_words_path = importlib.resources.files("markua_indexing.data").joinpath(
     "NLTKStopWords.txt"
@@ -52,11 +52,6 @@ def create_sorted_unique_word_list(text: str) -> List[str]:
 def filter_stop_words(word_list: List[str]) -> List[str]:
     stop_words = set(stop_words_path.read_text(encoding="utf-8").splitlines())
     return [word for word in word_list if word.lower() not in stop_words]
-
-
-import argparse
-import glob
-from pathlib import Path
 
 
 def main():
