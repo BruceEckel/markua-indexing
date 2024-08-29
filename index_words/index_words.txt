@@ -1,0 +1,47 @@
+Italicized Phrases:
+Caching
+Compare and Swap
+Dependency Injection
+Dependency Inversion
+Effect Oriented Programming
+Effect Systems
+Effects
+Large Language Model
+Short-circuiting
+Side Effects
+Side Effects.
+Thundering Herd
+are not
+at compile time
+bulkhead
+cached
+can
+compatible
+composability
+composition
+contention
+deferred execution
+dependency graph
+exception specifications
+exponential backoff
+flaky
+in parallel
+main
+not
+predictability
+pure
+rate limiter
+refactoring
+returned
+seem
+technical debt.
+throw
+together
+too
+transformers
+type
+what
+when
+wiring graph
+
+Index Words:

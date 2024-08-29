@@ -39,6 +39,7 @@ def remove_fences_command_line():
 
 
 def find_italicized_phrases(markdown: str) -> List[str]:
+    max_words: int = 4
     italic_phrases = []
 
     # Find phrases surrounded by asterisks (*)
@@ -50,6 +51,9 @@ def find_italicized_phrases(markdown: str) -> List[str]:
     underscore_pattern = r"(?<!\\)_([^_]+)_(?!_)"
     underscore_matches = re.findall(underscore_pattern, markdown)
     italic_phrases.extend(underscore_matches)
+
+    # Filter out phrases that exceed the word count
+    italic_phrases = [phrase for phrase in italic_phrases if len(phrase.split()) < max_words]
 
     return italic_phrases
 
@@ -65,10 +69,11 @@ def filter_stop_words(word_list: List[str]) -> List[str]:
 
     # Iterate over all .txt files in the 'dictionaries' directory
     for txt_file in dictionaries.directory.glob("*.txt"):
-        stop_words.update(txt_file.read_text(encoding="utf-8").splitlines())
+        # Convert all stop words to lowercase before adding them to the set
+        stop_words.update(word.lower() for word in txt_file.read_text(encoding="utf-8").splitlines())
 
     # Filter the word list
-    return [word for word in word_list if word not in stop_words]
+    return [word for word in word_list if word.lower() not in stop_words]
 
 
 def main():
