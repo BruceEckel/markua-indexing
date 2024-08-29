@@ -7,11 +7,13 @@ from typing import List, Set
 
 from markua_indexing.top_dir import TopDir
 
-stop_words_path = importlib.resources.files("markua_indexing.data").joinpath(
-    "NLTKStopWords.txt"
-)
-
-index_words_file = TopDir("data") / "index_words.txt"
+# stop_words_path = importlib.resources.files("markua_indexing.data").joinpath(
+#     "NLTKStopWords.txt"
+# )
+# Result file:
+index_words_file = TopDir("index_words") / "index_words.txt"
+# Directory containing .txt files of words to exclude:
+dictionaries = TopDir("dictionaries")
 
 
 def remove_fences(markdown: str) -> str:
@@ -37,9 +39,18 @@ def remove_fences_command_line():
 
 
 def find_italicized_phrases(markdown: str) -> List[str]:
-    pattern = r"(?<!\*)\*(.*?)\*(?!\*)|(?<!_)_(.*?)_(?!_)"
-    matches = re.findall(pattern, markdown)
-    italic_phrases = [phrase for group in matches for phrase in group if phrase]
+    italic_phrases = []
+
+    # Find phrases surrounded by asterisks (*)
+    asterisk_pattern = r"(?<!\\)\*([^*]+)\*(?!\*)"
+    asterisk_matches = re.findall(asterisk_pattern, markdown)
+    italic_phrases.extend(asterisk_matches)
+
+    # Find phrases surrounded by underscores (_)
+    underscore_pattern = r"(?<!\\)_([^_]+)_(?!_)"
+    underscore_matches = re.findall(underscore_pattern, markdown)
+    italic_phrases.extend(underscore_matches)
+
     return italic_phrases
 
 
@@ -50,8 +61,14 @@ def create_sorted_unique_word_list(text: str) -> List[str]:
 
 
 def filter_stop_words(word_list: List[str]) -> List[str]:
-    stop_words = set(stop_words_path.read_text(encoding="utf-8").splitlines())
-    return [word for word in word_list if word.lower() not in stop_words]
+    stop_words = set()
+
+    # Iterate over all .txt files in the 'dictionaries' directory
+    for txt_file in dictionaries.directory.glob("*.txt"):
+        stop_words.update(txt_file.read_text(encoding="utf-8").splitlines())
+
+    # Filter the word list
+    return [word for word in word_list if word not in stop_words]
 
 
 def main():

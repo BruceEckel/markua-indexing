@@ -1,0 +1,2 @@
+- NLTK.txt from https://gist.github.com/sebleier/554280
+- ef_edu.txt from https://www.ef.edu/english-resources/english-vocabulary/top-3000-words/
