@@ -1,6 +1,14 @@
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import List
+
+from markua_indexing.top_dir import TopDir
+
+# Directory containing .txt files of words and phrases to exclude:
+dictionaries = TopDir("dictionaries")
+# Resulting words & phrases to index:
+index_words_file = TopDir("index_words") / "index_words.txt"
 
 
 @dataclass
@@ -9,11 +17,17 @@ class MarkdownDoc:
     original: str = field(init=False)
     codeless: str = field(init=False)
     italicized_phrases: list[str] = field(init=False)
+    unique_words: list[str] = field(init=False)
+    index_phrases: list[str] = field(init=False)
+    index_words: list[str] = field(init=False)
 
     def __post_init__(self) -> None:
         self.original = self.doc_path.read_text(encoding='utf-8')
         self.codeless = strip_code(self.original)
         self.italicized_phrases = italicized_phrases(self.codeless)
+        self.unique_words = unique_words(self.codeless)
+        self.index_phrases = remove_stop_words(self.italicized_phrases)
+        self.index_words = remove_stop_words(self.unique_words)
 
 
 def strip_code(source: str) -> str:
@@ -41,9 +55,29 @@ def italicized_phrases(source: str) -> list[str]:
     underscored_phrases = re.findall(underscored, source, flags=re.DOTALL)
     return starred_phrases + underscored_phrases
 
-def unique_words(source: str) -> list[str]:
+
+def unique_words(source: str) -> List[str]:
     # Replace all non-word characters (punctuation, special characters)
     # with spaces, then break on spaces into words
     words = re.sub(r'\W+', ' ', source).split()
     # Filter out words that consist only of numbers
     non_numbers = [word for word in words if not word.isdigit()]
+    # Produce a list of unique words sorted alphabetically
+    return sorted(list(set(non_numbers)))
+
+
+def read_and_remove_comments(file_path: Path) -> list[str]:
+    with file_path.open(encoding='utf-8') as file:
+        return [line.strip() for line in file if not line.lstrip().startswith('#')]
+
+
+def remove_stop_words(word_list: List[str]) -> List[str]:
+    stop_words = set()
+
+    # Dictionary lines starting with '#' are comments
+    for dictionary in dictionaries.directory.glob("*.txt"):
+        with dictionary.open(encoding='utf-8') as file:
+            stop_words.update([line.strip() for line in file
+                               if not line.lstrip().startswith('#')])
+
+    return [word for word in word_list if word.lower() not in stop_words]
