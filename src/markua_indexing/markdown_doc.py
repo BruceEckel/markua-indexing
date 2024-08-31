@@ -42,7 +42,7 @@ def strip_code(source: str) -> str:
     return re.sub(r'\n```.*?```[^\n]*', '', source, flags=re.DOTALL)
 
 
-def italicized_phrases(source: str) -> list[str]:
+def italicized_phrases(source: str) -> List[str]:
     """
     source (str): The input string to search for italicized phrases.
     Returns:
@@ -65,8 +65,8 @@ def unique_words(source: str) -> List[str]:
     # Produce a list of unique words sorted alphabetically
     return sorted(list(set(non_numbers)))
 
-
-def read_and_remove_comments(file_path: Path) -> list[str]:
+# TODO NEEDS INCORPORATION INTO remove_stop_words
+def read_and_remove_comments(file_path: Path) -> List[str]:
     with file_path.open(encoding='utf-8') as file:
         return [line.strip() for line in file if not line.lstrip().startswith('#')]
 
