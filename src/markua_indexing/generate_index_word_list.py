@@ -7,13 +7,14 @@ from typing import List, Set
 
 from markua_indexing.top_dir import TopDir
 
-# stop_words_path = importlib.resources.files("markua_indexing.data").joinpath(
-#     "NLTKStopWords.txt"
-# )
-# Result file:
 index_words_file = TopDir("index_words") / "index_words.txt"
 # Directory containing .txt files of words to exclude:
 dictionaries = TopDir("dictionaries")
+
+
+def read_and_remove_comments(file_path: Path) -> list[str]:
+    with file_path.open(encoding='utf-8') as file:
+        return [line for line in file if not line.lstrip().startswith('#')]
 
 
 def remove_fences(markdown: str) -> str:
@@ -70,7 +71,7 @@ def filter_stop_words(word_list: List[str]) -> List[str]:
     # Iterate over all .txt files in the 'dictionaries' directory
     for txt_file in dictionaries.directory.glob("*.txt"):
         # Convert all stop words to lowercase before adding them to the set
-        stop_words.update(word.lower() for word in txt_file.read_text(encoding="utf-8").splitlines())
+        stop_words.update(word.lower() for word in read_and_remove_comments(txt_file))
 
     # Filter the word list
     return [word for word in word_list if word.lower() not in stop_words]

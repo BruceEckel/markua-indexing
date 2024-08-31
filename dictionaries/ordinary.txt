@@ -1,3 +1,5 @@
+# "Ordinary" (non-indexable) words, derived and  
+# edited from the book Effect Oriented Programming. 
 abandoned
 abbreviation
 accepted
@@ -73,7 +75,6 @@ attempts
 attribution
 automatically
 automation
-backoff
 baked
 bakes
 baking
@@ -235,8 +236,6 @@ decades
 def
 default
 defect
-defer
-deferred
 deferring
 defers
 deficiencies
@@ -326,7 +325,6 @@ ensures
 ensuring
 enthusiastic
 enumerated
-env
 environments
 equivalent
 ergonomic
@@ -403,11 +401,9 @@ format
 forms
 fortunately
 foundations
-fp
 fraction
 fragile
 freely
-fu
 functional
 functionality
 functions
@@ -427,7 +423,6 @@ grows
 guaranteed
 guarantees
 guarding
-hali
 handing
 handled
 handler
@@ -446,7 +441,6 @@ heads
 heard
 heated
 hedged
-hedging
 helpers
 helps
 herd
@@ -462,8 +456,6 @@ hours
 identical
 imagined
 immune
-immutability
-immutable
 imparts
 impediment
 implementation
@@ -489,16 +481,12 @@ indefinitely
 indentation
 indicating
 inevitably
-inference
-inferred
 infinity
 inherently
 initialization
 initialized
 initializing
 inject
-injection
-injector
 input
 inputs
 insert
@@ -512,12 +500,10 @@ integrity
 intent
 intentionally
 interacting
-interface
 intermediary
 intern
 interprets
 interrelationships
-interrupt
 interrupted
 interruption
 interval
@@ -525,7 +511,6 @@ intro
 introduces
 introducing
 invasive
-inversion
 investing
 invisible
 invocation
@@ -536,6 +521,7 @@ isolate
 isolated
 isolating
 issues
+# Got here
 java
 keyword
 killed
