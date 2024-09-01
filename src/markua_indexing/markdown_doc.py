@@ -1,7 +1,7 @@
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List
+from typing import List, Set
 
 from markua_indexing.top_dir import TopDir
 
@@ -16,10 +16,10 @@ class MarkdownDoc:
     doc_path: Path
     original: str = field(init=False)
     codeless: str = field(init=False)
-    italicized_phrases: list[str] = field(init=False)
-    unique_words: list[str] = field(init=False)
-    index_phrases: list[str] = field(init=False)
-    index_words: list[str] = field(init=False)
+    italicized_phrases: Set[str] = field(init=False)
+    unique_words: Set[str] = field(init=False)
+    index_phrases: Set[str] = field(init=False)
+    index_words: Set[str] = field(init=False)
 
     def __post_init__(self) -> None:
         self.original = self.doc_path.read_text(encoding='utf-8')
@@ -42,7 +42,7 @@ def strip_code(source: str) -> str:
     return re.sub(r'\n```.*?```[^\n]*', '', source, flags=re.DOTALL)
 
 
-def italicized_phrases(source: str) -> List[str]:
+def italicized_phrases(source: str) -> Set[str]:
     """
     source (str): The input string to search for italicized phrases.
     Returns:
@@ -53,31 +53,27 @@ def italicized_phrases(source: str) -> List[str]:
     underscored = r'_.*?_'
     starred_phrases = re.findall(starred, source, flags=re.DOTALL)
     underscored_phrases = re.findall(underscored, source, flags=re.DOTALL)
-    return starred_phrases + underscored_phrases
+    return set(starred_phrases) | set(underscored_phrases)
 
 
-def unique_words(source: str) -> List[str]:
+def unique_words(source: str) -> Set[str]:
     # Replace all non-word characters (punctuation, special characters)
     # with spaces, then break on spaces into words
     words = re.sub(r'\W+', ' ', source).split()
     # Filter out words that consist only of numbers
     non_numbers = [word for word in words if not word.isdigit()]
     # Produce a list of unique words sorted alphabetically
-    return sorted(list(set(non_numbers)))
-
-# TODO NEEDS INCORPORATION INTO remove_stop_words
-def read_and_remove_comments(file_path: Path) -> List[str]:
-    with file_path.open(encoding='utf-8') as file:
-        return [line.strip() for line in file if not line.lstrip().startswith('#')]
+    return set(non_numbers)
 
 
-def remove_stop_words(word_list: List[str]) -> List[str]:
+def remove_stop_words(word_list: Set[str]) -> Set[str]:
     stop_words = set()
 
     # Dictionary lines starting with '#' are comments
     for dictionary in dictionaries.directory.glob("*.txt"):
         with dictionary.open(encoding='utf-8') as file:
-            stop_words.update([line.strip() for line in file
+            stop_words.update([line.strip().lower() for line in file
                                if not line.lstrip().startswith('#')])
 
-    return [word for word in word_list if word.lower() not in stop_words]
+    return {word for word in word_list if word.lower() not in stop_words}
+    # return word_list - stop_words

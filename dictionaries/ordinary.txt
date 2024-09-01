@@ -521,16 +521,11 @@ isolate
 isolated
 isolating
 issues
-# Got here
-java
 keyword
 killed
 kills
 kindred
 kinds
-kit
-kyo
-lambda
 languages
 larger
 latency
@@ -549,8 +544,6 @@ listed
 lists
 lives
 loads
-locking
-logging
 logic
 logs
 lookup
@@ -560,7 +553,6 @@ losses
 lowering
 lurking
 machines
-macro
 magnolia
 maintainable
 maintaining
@@ -573,7 +565,6 @@ manual
 manually
 matches
 materials
-max
 maximum
 mechanisms
 memes
@@ -597,7 +588,6 @@ modifying
 modularizing
 module
 modules
-morty
 moving
 multi
 multiplied
@@ -606,7 +596,6 @@ mutable
 mutate
 mutates
 mutation
-nailer
 naive
 naming
 nest
@@ -647,8 +636,6 @@ packaged
 paid
 paradigm
 parallel
-parallelism
-parallelize
 parameter
 parameters
 paramount
@@ -723,7 +710,6 @@ raft
 raised
 random
 randomness
-ratelimiter
 reached
 reaches
 reactor
@@ -801,14 +787,12 @@ rewrite
 rewrites
 rewriting
 risen
-roc
 runs
 runtime
 sailors
 satisfies
 saved
 savings
-scala
 scenarios
 schedules
 scoped
@@ -831,8 +815,6 @@ server
 servers
 serviced
 services
-sets
-setup
 shapes
 shared
 sharing
@@ -847,6 +829,7 @@ simplicity
 simulate
 simulated
 simulating
+simulation
 simultaneous
 simultaneously
 situations
@@ -866,7 +849,6 @@ sorts
 sounds
 sources
 spaced
-spec
 specialized
 specification
 specifications
@@ -883,7 +865,6 @@ starting
 starts
 startup
 static
-stdout
 stopping
 stops
 stored
@@ -895,6 +876,7 @@ stresses
 strict
 strides
 structures
+structure
 struggling
 submarine
 subsection
@@ -986,7 +968,6 @@ unhandled
 unified
 unimportant
 unions
-unison
 universally
 unmanageable
 unmanaged
@@ -1014,10 +995,8 @@ val
 validates
 values
 vanish
-var
 variables
 varies
-vars
 vent
 venting
 verbs
@@ -1028,14 +1007,12 @@ viewed
 viewing
 violates
 visualized
-void
 wading
 waiting
 walls
 wasteful
 wastes
 watches
-wiki
 wildly
 windows
 wins
